@@ -21,14 +21,15 @@
     "hyperf-plus/helper": "^3.0",
     "hyperf-plus/route": "^3.1",
     "hyperf-plus/swagger": "^3.1",
-    "hyperf-plus/validate": "^3.1"
+    "hyperf-plus/validate": "^3.1",
+    "hyperf-plus/ui": "^3.1"
   },
   "autoload": {
     "psr-4": {
       "HPlus\\Admin\\": "src/"
     },
     "files": [
-      "src/Support/helpers.php"
+      "../ui/src/Support/helpers.php"
     ]
   },
   "autoload-dev": {

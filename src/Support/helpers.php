@@ -1,67 +1,69 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+use HPlus\Admin\Exception\ApiAmisException;
 
-use HPlus\Admin\Renderers\Amis;
-use HPlus\Admin\Renderers\Component;
-
-function admin_user(){
-
+function admin_user()
+{
 }
 
-
-if (!function_exists('amis')) {
+if (! function_exists('array2tree')) {
     /**
-     * @param $type
+     * 生成树状数据.
      *
+     * @return array
      */
-    function amis($type = null)
+    function array2tree(array $list, int $parentId = 0)
     {
-        if (check_filled($type)) {
-            return Component::make()->setType($type);
+        $data = [];
+        foreach ($list as $key => $item) {
+            if ($item['parent_id'] == $parentId) {
+                $children = array2tree($list, (int) $item['id']);
+                ! empty($children) && $item['children'] = $children;
+                $data[] = $item;
+                unset($list[$key]);
+            }
         }
-
-        return Amis::make();
+        return $data;
     }
 }
 
-if (! function_exists('check_filled')) {
+if (! function_exists('admin_abort_if')) {
     /**
-     * Determine if a value is "filled".
+     * 生成树状数据.
      *
-     * @param  mixed  $value
-     * @return bool
+     * @param mixed $error
+     *
+     * @return array
      */
-    function check_filled($value): bool
+    function admin_abort_if($error, string $message = '')
     {
-        return ! check_blank($value);
+        if ($error) {
+            throw new ApiAmisException($message);
+        }
     }
 }
 
-if (! function_exists('check_blank')) {
+if (! function_exists('amis_abort_if')) {
     /**
-     * Determine if the given value is "blank".
+     * 生成树状数据.
      *
-     * @param  mixed  $value
-     * @return bool
+     * @param mixed $error
+     *
+     * @return array
      */
-    function check_blank($value): bool
+    function amis_abort_if($error, string $message = '')
     {
-        if (is_null($value)) {
-            return true;
+        if ($error) {
+            throw new ApiAmisException($message);
         }
-
-        if (is_string($value)) {
-            return trim($value) === '';
-        }
-
-        if (is_numeric($value) || is_bool($value)) {
-            return false;
-        }
-
-        if ($value instanceof Countable) {
-            return count($value) === 0;
-        }
-
-        return empty($value);
     }
 }
